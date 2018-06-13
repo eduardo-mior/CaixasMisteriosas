@@ -23,7 +23,50 @@ public class ComandoGivecaixa implements Listener, CommandExecutor {
 		if (cmd.getName().equalsIgnoreCase("givecaixa")) {
 			 
 			if (!(s instanceof Player)) {
-				return false;
+				if (args.length != 3) {
+					s.sendMessage("§cComando incorreto, use /givecaixa <id> [quantia] [player]");
+					return false;
+				}
+				
+				String caixa = args[0].toLowerCase();
+				File file = DataManager.getFile(caixa, "caixas");
+				if (!file.exists()) {
+			        s.sendMessage("§cA caixa '" + caixa + "' não existe!");
+			        ComandoCaixas.ListCaixas(s);
+					return false;
+				}
+
+				FileConfiguration config = DataManager.getConfiguration(file);	
+	            int quantidade;
+	            try {
+	                quantidade = Integer.valueOf(args[1]);
+	            }
+	            catch (NumberFormatException e) {
+	                s.sendMessage("§cQuantidade invalida!");
+	                return false;
+	            }
+	            
+				ItemStack ItemCaixa = caixa(config);
+				ItemCaixa.setAmount(quantidade);
+	            if (args[2].equalsIgnoreCase("all")) {
+	            	for (Player p : Bukkit.getOnlinePlayers()) {
+	    				PlayerInventory inv = p.getInventory();
+	    				inv.addItem(ItemCaixa);
+	            	}
+	            	s.sendMessage("§a" + quantidade + "§a caixa(s) '" + caixa + "' enviada(s) para todos os players do server.");
+	            	return false;
+	            } else {
+					Player p = Bukkit.getPlayer(args[2]);
+		    		if (p == null) {
+		    			s.sendMessage("§cEste player não esta online no momento ou não existe!");
+		    			return false;
+		    		}
+		    		
+					PlayerInventory inv = p.getInventory();
+					inv.addItem(ItemCaixa);
+					s.sendMessage("§a" + quantidade + "§a caixa(s) '" + caixa + "' enviada(s) com sucesso para " + p.getName() + ".");
+					return false;
+	            }
 			} 
 			 				     
 			if (args.length < 1 || args.length > 3) {
@@ -55,7 +98,7 @@ public class ComandoGivecaixa implements Listener, CommandExecutor {
 				ItemStack ItemCaixa = caixa(config);
 				ItemCaixa.setAmount(quantidade);
 				inv.addItem(ItemCaixa);
-				s.sendMessage("§a" + quantidade + "§a caixa(s) '" + caixa + "' enviada para o seu inventário.");
+				s.sendMessage("§a" + quantidade + "§a caixa(s) '" + caixa + "' enviada(s) para o seu inventário.");
 				return false;
 			}
 			
@@ -69,18 +112,27 @@ public class ComandoGivecaixa implements Listener, CommandExecutor {
 	                return false;
 	            }
 	            
-				Player p = Bukkit.getPlayer(args[2]);
-	    		if (p == null) {
-	    			s.sendMessage("§cEste player não esta online no momento ou não existe!");
-	    			return false;
-	    		}
-	    		
-				PlayerInventory inv = p.getInventory();
 				ItemStack ItemCaixa = caixa(config);
 				ItemCaixa.setAmount(quantidade);
-				inv.addItem(ItemCaixa);
-				s.sendMessage("§a" + quantidade + "§a caixa(s) '" + caixa + "' enviada com sucesso para " + p.getName() + ".");
-				return false;
+	            if (args[2].equalsIgnoreCase("all")) {
+	            	for (Player p : Bukkit.getOnlinePlayers()) {
+	    				PlayerInventory inv = p.getInventory();
+	    				inv.addItem(ItemCaixa);
+	            	}
+	            	s.sendMessage("§a" + quantidade + "§a caixa(s) '" + caixa + "' enviada(s) para todos os players do server.");
+	            	return false;
+	            } else {
+					Player p = Bukkit.getPlayer(args[2]);
+		    		if (p == null) {
+		    			s.sendMessage("§cEste player não esta online no momento ou não existe!");
+		    			return false;
+		    		}
+		    		
+					PlayerInventory inv = p.getInventory();
+					inv.addItem(ItemCaixa);
+					s.sendMessage("§a" + quantidade + "§a caixa(s) '" + caixa + "' enviada(s) com sucesso para " + p.getName() + ".");
+					return false;
+	            }
 			}
 			
 			Player p = (Player)s;
