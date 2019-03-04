@@ -18,10 +18,7 @@ import rush.caixas.utils.DataManager;
 
 public class Main extends JavaPlugin implements Listener {
 
-	   public static Main aqui;
-
 	   public void onEnable() {
-		   instanceMain();
 		   gerarConfigs();
 		   registrarEventos();
 		   registrarComandos();
@@ -32,8 +29,8 @@ public class Main extends JavaPlugin implements Listener {
 		   HandlerList.unregisterAll((Listener) this);
 	   }
 	   
-	   public void instanceMain() {
-		   aqui = this;
+	   public Main instanceMain() {
+		   return getPlugin(Main.class);
 	   }
 	   
 	   public void gerarConfigs() {
